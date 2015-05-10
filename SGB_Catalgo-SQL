@@ -1,0 +1,76 @@
+# SandraGB
+SandraGB
+
+
+USE [StudentGradeTraker]   /*need to create this DB 1st*/
+GO
+
+/****** Object:  Table [dbo].[Catalog_Activity] ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Catalog_Activity](
+	[ActivityID] [int] IDENTITY(1,1) NOT NULL,
+	[ActivityName] [nvarchar](15) NOT NULL,
+	[ActivityNotes] [nvarchar](50) NULL,
+ CONSTRAINT [PK_Catalog_Activity] PRIMARY KEY CLUSTERED 
+(
+	[ActivityID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+/****** Object:  Table [dbo].[Catalog_School] ******/
+
+CREATE TABLE [dbo].[Catalog_School](
+	[School_ID] [tinyint] IDENTITY(1,1) NOT NULL,
+	[School_Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Division] PRIMARY KEY CLUSTERED 
+(
+	[School_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'systemID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalog_School', @level2type=N'COLUMN',@level2name=N'School_ID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Nombre del instituto educativo' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalog_School', @level2type=N'COLUMN',@level2name=N'School_Name'
+GO
+
+/****** Object:  Table [dbo].[Catalog_TermPeriod]    Script Date: 5/10/2015 10:00:33 AM ******/
+
+CREATE TABLE [dbo].[Catalog_TermPeriod](
+	[TermID] [int] IDENTITY(1,1) NOT NULL,
+	[TermDescr] [nvarchar](15) NOT NULL,
+	[TermTimeInDays] [int] NOT NULL,
+	[Notes] [nvarchar](50) NULL,
+ CONSTRAINT [PK_Catalog_TermPeriod] PRIMARY KEY CLUSTERED 
+(
+	[TermID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+/****** Insert: Insert known required data into table ******/
+/****** Data for ACtivity Catalog ******/
+insert into catalog_activity 
+	(ActivityName)
+values('Asistencia'),('enClase'),('Participacion'),('Tareas'),('Proyectos'),('Examen'),('Portafolio'),('Extra')
+
+/****** Data for School Catalog ******/
+insert into Catalog_School
+(School_Name)
+values('CONALEP'),('UNIDEP')
+
+/****** Data for TermPeriod Catalog ******/
+insert into Catalog_TermPeriod
+(TermDescr, TermTimeInDays,Notes)
+values('Semestre',
