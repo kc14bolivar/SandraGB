@@ -2,7 +2,7 @@
 SandraGB
 
 
-USE [StudentGradeTraker]   /*need to create this DB 1st*/
+USE [StudentGradeTraker]
 GO
 
 /****** Object:  Table [dbo].[Catalog_Activity] ******/
@@ -59,6 +59,130 @@ CREATE TABLE [dbo].[Catalog_TermPeriod](
 GO
 
 
+/****** Object:  Table [dbo].[UsrCat_Clasess]    ******/
+
+CREATE TABLE [dbo].[UsrCat_Clasess](
+	[ClassSysID] [int] NOT NULL,
+	[Class_ID] [nvarchar](10) NOT NULL,
+	[Class_SchoolID] [tinyint] NOT NULL,
+	[Class_TermPeriod] [int] NOT NULL,
+	[Class_DateStart] [date] NOT NULL,
+	[Class_DateEnds] [date] NOT NULL,
+ CONSTRAINT [PK_UsrCat_Clasess] PRIMARY KEY CLUSTERED 
+(
+	[ClassSysID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[UsrCat_Clasess]  WITH CHECK ADD  CONSTRAINT [Class-School_Relation] FOREIGN KEY([Class_SchoolID])
+REFERENCES [dbo].[Catalog_School] ([School_ID])
+GO
+
+ALTER TABLE [dbo].[UsrCat_Clasess] CHECK CONSTRAINT [Class-School_Relation]
+GO
+
+ALTER TABLE [dbo].[UsrCat_Clasess]  WITH CHECK ADD  CONSTRAINT [class-Term_Relation] FOREIGN KEY([Class_TermPeriod])
+REFERENCES [dbo].[Catalog_TermPeriod] ([TermID])
+GO
+
+ALTER TABLE [dbo].[UsrCat_Clasess] CHECK CONSTRAINT [class-Term_Relation]
+GO
+
+
+
+
+/****** Object:  Table [dbo].[reg_ActivitiesRegisterMaster]     ******/
+
+CREATE TABLE [dbo].[reg_ActivitiesRegisterMaster](
+	[reg_sysID] [int] IDENTITY(1,1) NOT NULL,
+	[reg_ClassFrom] [int] NOT NULL,
+	[reg_ActivityType] [int] NOT NULL,
+	[reg_ActivityName] [nvarchar](50) NOT NULL,
+	[reg_ActivityNotes] [text] NOT NULL,
+	[reg_PointsWorth] [int] NOT NULL,
+	[reg_DueDate] [date] NOT NULL,
+ CONSTRAINT [PK_reg_ActivitiesRegister] PRIMARY KEY CLUSTERED 
+(
+	[reg_sysID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[reg_ActivitiesRegisterMaster]  WITH CHECK ADD  CONSTRAINT [ActivyRelation] FOREIGN KEY([reg_ActivityType])
+REFERENCES [dbo].[Catalog_Activity] ([ActivityID])
+GO
+
+ALTER TABLE [dbo].[reg_ActivitiesRegisterMaster] CHECK CONSTRAINT [ActivyRelation]
+GO
+
+ALTER TABLE [dbo].[reg_ActivitiesRegisterMaster]  WITH CHECK ADD  CONSTRAINT [ClasssRelation] FOREIGN KEY([reg_ClassFrom])
+REFERENCES [dbo].[UsrCat_Clasess] ([ClassSysID])
+GO
+
+ALTER TABLE [dbo].[reg_ActivitiesRegisterMaster] CHECK CONSTRAINT [ClasssRelation]
+GO
+
+
+/****** Object:  Table [dbo].[UsrCat_Students_List]   ******/
+
+CREATE TABLE [dbo].[UsrCat_Students_List](
+	[Students_SysID] [int] IDENTITY(1,1) NOT NULL,
+	[Students_Name] [nvarchar](50) NULL,
+	[Students_ClassSysID] [int] NULL,
+	[Students_IsActive] [bit] NULL,
+ CONSTRAINT [PK_Students_List] PRIMARY KEY CLUSTERED 
+(
+	[Students_SysID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[UsrCat_Students_List]  WITH CHECK ADD  CONSTRAINT [Student-Class_relation] FOREIGN KEY([Students_ClassSysID])
+REFERENCES [dbo].[UsrCat_Clasess] ([ClassSysID])
+GO
+
+ALTER TABLE [dbo].[UsrCat_Students_List] CHECK CONSTRAINT [Student-Class_relation]
+GO
+
+
+/****** Object:  Table [dbo].[reg_StudentActivity_Relation]   ******/
+
+
+CREATE TABLE [dbo].[reg_StudentActivity_Relation](
+	[reg_ClassActivityID] [int] IDENTITY(1,1) NOT NULL,
+	[reg_ClassActivity] [int] NOT NULL,
+	[reg_StudentActivityIn] [int] NOT NULL,
+	[reg_StudentActivityInDate] [date] NOT NULL,
+	[reg_StudentActivityLate] [bit] NOT NULL,
+ CONSTRAINT [PK_reg_StudentActivity_Relation] PRIMARY KEY CLUSTERED 
+(
+	[reg_ClassActivityID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[reg_StudentActivity_Relation]  WITH CHECK ADD  CONSTRAINT [Activity-Master_Relation] FOREIGN KEY([reg_ClassActivity])
+REFERENCES [dbo].[reg_ActivitiesRegisterMaster] ([reg_sysID])
+GO
+
+ALTER TABLE [dbo].[reg_StudentActivity_Relation] CHECK CONSTRAINT [Activity-Master_Relation]
+GO
+
+ALTER TABLE [dbo].[reg_StudentActivity_Relation]  WITH CHECK ADD  CONSTRAINT [Activity-Student_Relation] FOREIGN KEY([reg_StudentActivityIn])
+REFERENCES [dbo].[UsrCat_Students_List] ([Students_SysID])
+GO
+
+ALTER TABLE [dbo].[reg_StudentActivity_Relation] CHECK CONSTRAINT [Activity-Student_Relation]
+GO
+
+
+
+
 /****** Insert: Insert known required data into table ******/
 /****** Data for ACtivity Catalog ******/
 insert into catalog_activity 
@@ -73,4 +197,5 @@ values('CONALEP'),('UNIDEP')
 /****** Data for TermPeriod Catalog ******/
 insert into Catalog_TermPeriod
 (TermDescr, TermTimeInDays,Notes)
-values('Semestre',
+values('Semestre',180,'6 meses'), ('Quatrimestre',120,'4 meses'), ('Trimestre', 90, '3 meses'),('Bimestre',60,'2 meses')
+
