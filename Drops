@@ -1,0 +1,18 @@
+# SandraGB
+SandraGB
+
+
+USE [StudentGradeTraker]
+GO
+
+/****** Object:  Table [dbo].[Catalog_Activity]   ******/
+
+DROP TABLE [dbo].[reg_StudentActivity_Relation]
+DROP TABLE [dbo].[reg_ActivitiesRegisterMaster]
+DROP TABLE [dbo].[UsrCat_Students_List]
+DROP TABLE [dbo].[UsrCat_Clasess]
+DROP TABLE [dbo].[Catalog_Activity]
+DROP TABLE [dbo].[Catalog_School]
+DROP TABLE [dbo].[Catalog_TermPeriod]
+
+GO
